@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>📍 Location Found</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.card {
+    width: min(92vw, 430px);
+    min-height: 680px;
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 70px rgba(0,0,0,.5);
+    position: relative;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top {
+    height: 76px;
+    padding: 18px 22px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-bottom: 1px solid #eee;
+}
+
+.dot {
+    width: 13px;
+    height: 13px;
+
+    background: #22c55e;
+    border-radius: 50%;
+
+    box-shadow: 0 0 0 5px #dcfce7;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 3px;
+}
+
+
+/* =========================
+   FAKE MAP
+========================= */
+
+.map {
+    height: 380px;
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            25deg,
+            transparent 46%,
+            #ffffff 47%,
+            #ffffff 51%,
+            transparent 52%
+        ),
+
+        linear-gradient(
+            110deg,
+            transparent 48%,
+            #ffffff 49%,
+            #ffffff 52%,
+            transparent 53%
+        ),
+
+        repeating-linear-gradient(
+            0deg,
+            #d9f0df 0 42px,
+            #cce8d3 43px 45px
+        ),
+
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 78px,
+            #c7e5cf 79px 82px
+        );
+}
+
+
+/* Roads */
+
+.road {
+    position: absolute;
+
+    background: rgba(255,255,255,.85);
+
+    width: 150%;
+    height: 30px;
+
+    transform: rotate(-18deg);
+
+    top: 150px;
+    left: -30px;
+
+    box-shadow: 0 0 0 2px #d4d4d4;
+}
+
+.road2 {
+    position: absolute;
+
+    background: rgba(255,255,255,.85);
+
+    width: 150%;
+    height: 24px;
+
+    transform: rotate(62deg);
+
+    top: 130px;
+    left: -40px;
+
+    box-shadow: 0 0 0 2px #d4d4d4;
+}
+
+
+/* Map Labels */
+
+.fake-label {
+    position: absolute;
+
+    color: #6b7280;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================
+   LOCATION PIN
+========================= */
+
+.pin {
+    position: absolute;
+
+    left: 50%;
+    top: 52%;
+
+    width: 54px;
+    height: 54px;
+
+    background: #ef4444;
+
+    border-radius: 50% 50% 50% 0;
+
+    transform:
+        translate(-50%, -100%)
+        rotate(-45deg);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.25);
+
+    animation:
+        drop .8s ease-out;
+}
+
+.pin span {
+    display: block;
+
+    transform: rotate(45deg);
+
+    font-size: 25px;
+
+    text-align: center;
+
+    margin-top: 13px;
+}
+
+
+/* Pulse */
+
+.pulse {
+    position: absolute;
+
+    left: 50%;
+    top: 52%;
+
+    width: 22px;
+    height: 22px;
+
+    border: 3px solid #ef4444;
+
+    border-radius: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    animation:
+        pulse 1.6s infinite;
+}
+
+
+@keyframes drop {
+
+    from {
+        top: 10%;
+        opacity: 0;
+    }
+
+    to {
+        top: 52%;
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes pulse {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(.7);
+
+        opacity: .9;
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(5);
+
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================
+   LOADING
+========================= */
+
+.loading {
+    position: absolute;
+
+    left: 50%;
+    bottom: 28px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        rgba(17,24,39,.94);
+
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.2);
+}
+
+
+/* =========================
+   REVEAL
+========================= */
+
+.reveal {
+    display: none;
+
+    text-align: center;
+
+    padding:
+        25px
+        22px
+        35px;
+
+    max-height: 590px;
+
+    overflow-y: auto;
+}
+
+
+/* Heart */
+
+.heart {
+    font-size: 65px;
+
+    line-height: 1;
+
+    animation:
+        beat 1s infinite;
+}
+
+
+@keyframes beat {
+
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+
+}
+
+
+/* Heading */
+
+h1 {
+    margin:
+        8px 0 5px;
+
+    font-size: 27px;
+
+    color: #111827;
+}
+
+
+/* Location */
+
+.location {
+    color: #ef4444;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================
+   HER PHOTO
+========================= */
+
+.photo-container {
+
+    width: 210px;
+    height: 210px;
+
+    margin: auto;
+
+    border-radius: 50%;
+
+    padding: 5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4d6d,
+            #ff8fa3,
+            #ff4d6d
+        );
+
+    box-shadow:
+        0 10px 30px
+        rgba(239,68,68,.35);
+}
+
+.photo-container img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    display: block;
+
+    background: #eee;
+}
+
+
+/* =========================
+   MAIN MESSAGE
+========================= */
+
+.message {
+
+    margin:
+        20px auto 0;
+
+    max-width: 330px;
+
+    color: #4b5563;
+
+    line-height: 1.6;
+
+    font-size: 15px;
+}
+
+.message strong {
+    color: #111827;
+}
+
+
+/* =========================
+   SECRET BUTTON
+========================= */
+
+.secret-btn {
+
+    margin-top: 24px;
+
+    border: none;
+
+    padding:
+        13px 22px;
+
+    border-radius: 999px;
+
+    background: #111827;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s,
+        background .2s;
+}
+
+.secret-btn:hover {
+
+    transform:
+        scale(1.05);
+
+    background:
+        #ef4444;
+}
+
+
+/* =========================
+   SECRET MESSAGE
+========================= */
+
+.secret-message {
+
+    display: none;
+
+    margin-top: 22px;
+
+    padding: 18px;
+
+    border-radius: 18px;
+
+    background: #fff1f2;
+
+    color: #374151;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+
+    animation:
+        secretReveal .6s ease;
+}
+
+.secret-heart {
+
+    font-size: 32px;
+
+    margin-bottom: 5px;
+}
+
+.secret-message strong {
+
+    color: #ef4444;
+
+    font-size: 20px;
+}
+
+
+@keyframes secretReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(15px)
+            scale(.95);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="top">
+
+    <div class="dot"></div>
+
+    <div>
+
+        <div class="title">
+            Location received
+        </div>
+
+        <div
+            class="sub"
+            id="subText"
+        >
+            Finding current location...
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     FAKE MAP
+========================= -->
+
+<div
+    id="map"
+    class="map"
+>
+
+
+    <div class="road"></div>
+
+    <div class="road2"></div>
+
+
+    <div
+        class="fake-label"
+        style="
+        top:48px;
+        left:28px;
+        "
+    >
+        Sunshine Road
+    </div>
+
+
+    <div
+        class="fake-label"
+        style="
+        top:285px;
+        right:30px;
+        "
+    >
+        ♡ Park
+    </div>
+
+
+    <div
+        class="fake-label"
+        style="
+        top:205px;
+        left:30px;
+        "
+    >
+        Coffee Street
+    </div>
+
+
+    <div class="pulse"></div>
+
+
+    <div class="pin">
+
+        <span>
+            📍
+        </span>
+
+    </div>
+
+
+    <div
+        class="loading"
+        id="loading"
+    >
+        Connecting to satellites... 🛰️
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================
+     FINAL REVEAL
+========================= -->
+
+<div
+    id="reveal"
+    class="reveal"
+>
+
+
+    <div class="heart">
+        ❤️
+    </div>
+
+
+    <h1>
+        Location Found!
+    </h1>
+
+
+    <div class="location">
+        📍 YOUR HEART
+    </div>
+
+
+    <!-- HER PHOTO -->
+
+    <div class="photo-container">
+
+        <img
+            src="her-photo.jpg"
+            alt="❤️"
+        >
+
+    </div>
+
+
+    <!-- MAIN MESSAGE -->
+
+    <div class="message">
+
+        <strong>
+            Looks like my current location
+            is your heart. ❤️
+        </strong>
+
+        <br><br>
+
+        And honestly...
+
+        <br>
+
+        <b>
+            I don't think I want to leave. 😌
+        </b>
+
+    </div>
+
+
+    <!-- SECRET BUTTON -->
+
+    <button
+        class="secret-btn"
+        onclick="showSecret()"
+    >
+
+        One more thing 👀
+
+    </button>
+
+
+    <!-- SECRET MESSAGE -->
+
+    <div
+        id="secretMessage"
+        class="secret-message"
+    >
+
+        <div class="secret-heart">
+            💗
+        </div>
+
+
+        <div>
+
+            You look half fine…
+
+            <br>
+
+            <strong>
+                half mine. ❤️
+            </strong>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* ==================================
+   FAKE LOCATION SEARCH
+   Around 15-16 seconds
+================================== */
+
+let progress = 0;
+
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const subText =
+    document.getElementById(
+        "subText"
+    );
+
+
+const map =
+    document.getElementById(
+        "map"
+    );
+
+
+const reveal =
+    document.getElementById(
+        "reveal"
+    );
+
+
+
+/* Location messages */
+
+const messages = [
+
+    "Connecting to satellites... 🛰️",
+
+    "Scanning coordinates... 📡",
+
+    "Triangulating location... 📍",
+
+    "Checking nearby locations... 🔎",
+
+    "Analyzing coordinates... 🧭",
+
+    "Almost there... 👀",
+
+    "Finalizing location... ❤️"
+
+];
+
+
+let messageIndex = 0;
+
+
+
+/* Change message every 2 seconds */
+
+const messageTimer =
+setInterval(() => {
+
+    if (
+        messageIndex
+        <
+        messages.length
+    ) {
+
+        loading.textContent =
+            messages[messageIndex];
+
+        subText.textContent =
+            messages[messageIndex];
+
+        messageIndex++;
+
+    }
+
+}, 2000);
+
+
+
+/* Slow fake progress */
+
+const progressTimer =
+setInterval(() => {
+
+    /*
+       Slow progress.
+
+       Approximately
+       15-16 seconds.
+    */
+
+    progress +=
+        Math.floor(
+            Math.random() * 4
+        ) + 2;
+
+
+    if (
+        progress >= 100
+    ) {
+
+        progress = 100;
+
+
+        clearInterval(
+            progressTimer
+        );
+
+        clearInterval(
+            messageTimer
+        );
+
+
+        loading.textContent =
+            "📍 Location found ❤️";
+
+
+        subText.textContent =
+            "Location found";
+
+
+        /*
+           Keep location found
+           visible for 1.8 seconds.
+        */
+
+        setTimeout(() => {
+
+            map.style.display =
+                "none";
+
+            reveal.style.display =
+                "block";
+
+        }, 1800);
+
+
+    }
+
+}, 500);
+
+
+
+/* ==================================
+   SECRET MESSAGE
+================================== */
+
+function showSecret() {
+
+    const secret =
+        document.getElementById(
+            "secretMessage"
+        );
+
+
+    secret.style.display =
+        "block";
+
+
+    /*
+       Automatically scroll
+       to secret message.
+    */
+
+    setTimeout(() => {
+
+        secret.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "center"
+
+        });
+
+    }, 100);
+
+}
+
+</script>
+
+
+</body>
+</html>
